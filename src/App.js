@@ -20,7 +20,6 @@ class App extends Component {
   }
 
   linearSearch(num) {
-    this.setState({ num: num });
     let count = 0;
     for (let i = 0; i < this.state.array.length; i++) {
       if (this.state.array[i] !== num) {
@@ -37,44 +36,39 @@ class App extends Component {
   }
 
   //binary search functions
-
   binarySetCount(count) {
     this.setState({ binaryCount: count });
   }
 
-  binarySearch(num, start = 0, end = this.state.array.length - 1) {
-    let count = 0;
-    let sortedArray = this.state.array.sort();
+  binarySearch(num, start = 0, end = this.state.array.length - 1, count = 0) {
+    let array = this.state.array;
+    let sortedArray = [...array].sort();
     let middle = Math.floor((start + end) / 2);
-    console.log(count);
-    if (start > end) return this.binarySetCount(count + 1);
 
-    //if the last item in array is equal to our num then set our lastBinary state equal to value
-    if (start === end) return this.setState({ lastBinary: sortedArray[start] });
+    console.log(sortedArray, count);
+    if (start > end) return this.binarySetCount(this.state.array.length);
 
     if (num === sortedArray[middle]) {
-      return (
-        this.binarySetCount(count + 1),
-        this.setState({ lastBinary: sortedArray[middle] })
-      );
+      return this.binarySetCount(count + 1);
     }
 
-    if (num < middle) {
-      count++;
-      return this.binarySearch(num, start, sortedArray[middle - 1]);
+    if (num < sortedArray[middle]) {
+      return this.binarySearch(num, start, middle - 1, count + 1);
     }
 
-    if (num > middle) {
-      count++;
-      return this.binarySearch(num, sortedArray[middle + 1], end);
+    if (num > sortedArray[middle]) {
+      return this.binarySearch(num, middle + 1, end, count + 1);
     }
+
+    //if the last item in array is equal to our num then set our lastBinary state equal to value
+    if (start === end) return this.binarySetCount(count);
   }
 
   // result for both linear and binary
   result() {
-    if (this.state.binaryCount === 0) {
-      return '';
-    }
+    // if (this.state.binaryCount === 0) {
+    //   return '';
+    // }
     if (
       this.state.linearCount === this.state.array.length &&
       this.state.num !== this.state.array[this.state.array.length - 1]
@@ -87,9 +81,10 @@ class App extends Component {
     } else {
       return `Linear: You searched through ${
         this.state.linearCount
-      } items and found the number. Binary: Linear: You searched through ${
+      } items and found the number. 
+      Binary: You searched through ${
         this.state.binaryCount
-      } items n f the number `;
+      } items and found the number `;
     }
   }
 
